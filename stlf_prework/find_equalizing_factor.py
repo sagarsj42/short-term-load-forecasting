@@ -1,3 +1,5 @@
+'''A general factor by which the data for 2011 lags behind that of 2012.'''
+
 import csv
 
 import pandas as pd
