@@ -1,3 +1,5 @@
+'''Tutorial to determine the distribution of a randomly generated data.'''
+
 import scipy.stats as sts
 from matplotlib import pyplot as plt
 
