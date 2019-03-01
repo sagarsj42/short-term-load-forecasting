@@ -54,10 +54,10 @@ class DataLoader(object):
             month, day, hour, subhour = self.get_calendar_params(self.timestamps[i])
             output = np.array(self.load[i]).reshape(1, 1)
             input_list = [prevh1, prevh2, prevh3, prevd, prevw]
-            [input_list.append(m) for m in month]
-            [input_list.append(d) for d in day]
-            [input_list.append(h) for h in hour]
-            [input_list.append(s) for s in subhour]
+            input_list.extend(month)
+            input_list.extend(day)
+            input_list.extend(hour)
+            input_list.extend(subhour)
             len_ip = len(input_list)
             input_list = np.array(input_list).reshape(len_ip, 1)
             self.packets.append((input_list, output))
