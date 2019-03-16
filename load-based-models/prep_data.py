@@ -49,11 +49,14 @@ class DataLoader(object):
             prevh1 = self.load[i - 4]
             prevh2 = self.load[i - 8]
             prevh3 = self.load[i - 12]
+            prevh4 = self.load[i - 16]
+            prevh5 = self.load[i - 20]
+            prevh6 = self.load[i - 24]
             prevd = self.load[i - 96]
             prevw = self.load[i - 96*7]
             month, day, hour, subhour = self.get_calendar_params(self.timestamps[i])
             output = np.array(self.load[i]).reshape(1, 1)
-            input_list = [prevh1, prevh2, prevh3, prevd, prevw]
+            input_list = [prevh1, prevh2, prevh3, prevh4, prevh5, prevh6, prevd, prevw]
             input_list.extend(month)
             input_list.extend(day)
             input_list.extend(hour)
