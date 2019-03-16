@@ -53,7 +53,7 @@ class Forecaster(object):
         plt.show()
 
     def plot_differences(self, start=0, end=1096*96):
-        self.differences = list(map(lambda a1, a2 : (a1 - a2) * 100, self.actual, self.forecast))
+        self.differences = list(map(lambda a1, a2 : (a1 - a2), self.actual, self.forecast))
         fig = plt.figure(2)
         ax = fig.add_subplot(111)
         ax.plot(self.differences[start:end])
