@@ -65,4 +65,4 @@ class Forecaster(object):
 if __name__ == "__main__":
     f = Forecaster()
     f.plot_comparison(type='day', start='2013-08-01')
-    #f.plot_differences()
+    f.plot_differences()
