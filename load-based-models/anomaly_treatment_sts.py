@@ -1,7 +1,7 @@
 import vector_norm as vn
 import probability_distribution_function as pdf
 
-class AnomalyTreaterStats(object):
+class AnomalyTreaterSts(object):
     def __init__(self):
         vno = vn.VectorNorm()
         vno.find_anomalies()
@@ -29,6 +29,12 @@ class AnomalyTreaterStats(object):
         [print(a) for a in self.common_anomalies]
         print("{0} common bad dates found.".format(len(self.common_anomalies)))
 
+    def get_and_anomalies(self):
+        return self.common_anomalies
+
+    def get_or_anomalies(self):
+        return self.anomalies
+
 if __name__ == "__main__":
-    ats = AnomalyTreaterStats()
+    ats = AnomalyTreaterSts()
     ats.print_anomalies()

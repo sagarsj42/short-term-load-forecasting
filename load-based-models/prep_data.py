@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+import anomaly_treatment_sts as ats
+
 class DataLoader(object):
     def __init__(self):
         self.data = pd.read_csv("LD2011_2014_N.csv")
@@ -10,6 +12,7 @@ class DataLoader(object):
         self.training_lim = 731*96
         self.upper = self.lower + 1096*96 + 1
         self.packets = []
+        self.anomalies = ats.AnomalyTreaterSts().get_and_anomalies()
 
     def get_weekday(self, year, month, date):
         day = 5 #Saturday on 1st Jan 2005
@@ -46,16 +49,20 @@ class DataLoader(object):
 
     def get_data(self):
         for i in range(self.lower, self.upper):
-            prevh1 = self.load[i - 4]
-            prevh2 = self.load[i - 8]
-            prevh3 = self.load[i - 12]
-            prevh4 = self.load[i - 16]
-            prevh5 = self.load[i - 20]
-            prevh6 = self.load[i - 24]
-            prevd = self.load[i - 96]
-            prevw = self.load[i - 96*7]
-            month, day, hour, subhour = self.get_calendar_params(self.timestamps[i])
-            output = np.array(self.load[i]).reshape(1, 1)
+            ic = i
+            if self.timestamps[i] in self.anomalies:
+                while self.timestamps[ic] not in self.anomalies:
+                    ic = i - 96*7
+            prevh1 = self.load[ic - 4]
+            prevh2 = self.load[ic - 8]
+            prevh3 = self.load[ic - 12]
+            prevh4 = self.load[ic - 16]
+            prevh5 = self.load[ic - 20]
+            prevh6 = self.load[ic - 24]
+            prevd = self.load[ic - 96]
+            prevw = self.load[ic - 96*7]
+            month, day, hour, subhour = self.get_calendar_params(self.timestamps[ic])
+            output = np.array(self.load[ic]).reshape(1, 1)
             input_list = [prevh1, prevh2, prevh3, prevh4, prevh5, prevh6, prevd, prevw]
             input_list.extend(month)
             input_list.extend(day)

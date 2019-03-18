@@ -53,7 +53,7 @@ class Forecaster(object):
         plt.show()
 
     def plot_differences(self, start=0, end=1096*96):
-        self.differences = list(map(lambda a1, a2 : (a1 - a2), self.actual, self.forecast))
+        self.differences = list(map(lambda a1, a2 : (a1 - a2) / a1 * 100, self.actual, self.forecast))
         fig = plt.figure(2)
         ax = fig.add_subplot(111)
         ax.plot(self.differences[start:end])
@@ -64,5 +64,5 @@ class Forecaster(object):
 
 if __name__ == "__main__":
     f = Forecaster()
-    f.plot_comparison(type='day', start='2013-08-01')
+    f.plot_comparison(type='week', start='2013-12-20')
     f.plot_differences()
