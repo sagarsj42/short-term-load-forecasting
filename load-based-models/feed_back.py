@@ -7,7 +7,7 @@ import prep_data
 
 class Network(object):
     def __init__(self, hidden_nos=10, cache_len=10):
-        self.training_data, self.test_data = prep_data.DataLoader().get_data()
+        self.training_data, self.test_data = prep_data.DataLoader(replace_anomalies=False).get_data()
         self.num_layers = 3
         ip_len = len(self.training_data[0][0])
         self.sizes = [ip_len, hidden_nos, 1]

@@ -14,7 +14,7 @@ class Forecaster(object):
         self.intervals = {'day': 96, 'week': 7*96, 'month': 31*96, 'year': 366*96}
 
     def set_params(self, run_network=False):
-        self.data, test = prep_data.DataLoader().get_data()
+        self.data, test = prep_data.DataLoader(replace_anomalies=False).get_data()
         self.data.extend(test)
         self.actual = list(map(lambda x : x[1][0][0], self.data))
         if run_network:
@@ -54,6 +54,9 @@ class Forecaster(object):
 
     def plot_differences(self, start=0, end=1096*96):
         self.differences = list(map(lambda a1, a2 : (a1 - a2) / a1 * 100, self.actual, self.forecast))
+        for d in self.differences:
+            if abs(d) > 100:
+                print(self.timestamps[self.differences.index(d)])
         fig = plt.figure(2)
         ax = fig.add_subplot(111)
         ax.plot(self.differences[start:end])
@@ -64,5 +67,5 @@ class Forecaster(object):
 
 if __name__ == "__main__":
     f = Forecaster()
-    f.plot_comparison(type='week', start='2013-12-20')
+    f.plot_comparison(type='day', start='2013-10-27')
     f.plot_differences()

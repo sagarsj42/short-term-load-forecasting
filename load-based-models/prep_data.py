@@ -4,7 +4,7 @@ import numpy as np
 import anomaly_treatment_sts as ats
 
 class DataLoader(object):
-    def __init__(self):
+    def __init__(self, replace_anomalies=True, correct_dst=True):
         self.data = pd.read_csv("LD2011_2014_N.csv")
         self.timestamps = self.data.YMDHMS.values
         self.load = np.array(self.data.Load_kW.values)
@@ -12,7 +12,38 @@ class DataLoader(object):
         self.training_lim = 731*96
         self.upper = self.lower + 1096*96 + 1
         self.packets = []
+        if replace_anomalies:
+            self.replace_anomalies()
+        if correct_dst:
+            self.correct_dst()
+
+    def correct_dst(self):
+        dst_start = ['2012-03-25', '2013-03-31', '2014-03-30']
+        dst_end = ['2012-10-28', '2013-10-27', '2014-10-26']
+        self.correct_dst_start(dst_start)
+        self.correct_dst_end(dst_end)
+
+    def correct_dst_start(self, dst_start):
+        for d in dst_start:
+            d += ' 01:00:00'
+            i = np.where(self.timestamps == d)[0][0]
+            self.load[i: i+4] = self.load[i-96: i-92]
+
+    def correct_dst_end(self, dst_end):
+        for d in dst_end:
+            d += ' 01:00:00'
+            i = np.where(self.timestamps == d)[0][0]
+            self.load[i: i+4] = self.load[i: i+4] / 2
+
+    def replace_anomalies(self):
         self.anomalies = ats.AnomalyTreaterSts().get_and_anomalies()
+        for an in self.anomalies:
+            an += ' 00:00:00'
+            i = np.where(self.timestamps == an)[0][0]
+            ic = i - 96*7
+            while self.timestamps[ic][:10] in self.anomalies:
+                ic -= 96*7
+            self.load[i: i+96] = self.load[ic: ic+96]
 
     def get_weekday(self, year, month, date):
         day = 5 #Saturday on 1st Jan 2005
@@ -49,20 +80,16 @@ class DataLoader(object):
 
     def get_data(self):
         for i in range(self.lower, self.upper):
-            ic = i
-            if self.timestamps[i] in self.anomalies:
-                while self.timestamps[ic] not in self.anomalies:
-                    ic = i - 96*7
-            prevh1 = self.load[ic - 4]
-            prevh2 = self.load[ic - 8]
-            prevh3 = self.load[ic - 12]
-            prevh4 = self.load[ic - 16]
-            prevh5 = self.load[ic - 20]
-            prevh6 = self.load[ic - 24]
-            prevd = self.load[ic - 96]
-            prevw = self.load[ic - 96*7]
-            month, day, hour, subhour = self.get_calendar_params(self.timestamps[ic])
-            output = np.array(self.load[ic]).reshape(1, 1)
+            prevh1 = self.load[i - 4]
+            prevh2 = self.load[i - 8]
+            prevh3 = self.load[i - 12]
+            prevh4 = self.load[i - 16]
+            prevh5 = self.load[i - 20]
+            prevh6 = self.load[i - 24]
+            prevd = self.load[i - 96]
+            prevw = self.load[i - 96*7]
+            month, day, hour, subhour = self.get_calendar_params(self.timestamps[i])
+            output = np.array(self.load[i]).reshape(1, 1)
             input_list = [prevh1, prevh2, prevh3, prevh4, prevh5, prevh6, prevd, prevw]
             input_list.extend(month)
             input_list.extend(day)
