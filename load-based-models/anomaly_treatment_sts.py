@@ -8,10 +8,10 @@ import probability_distribution_function as pdf
 
 class AnomalyTreaterSts(object):
     def __init__(self):
-        vno = vn.VectorNorm(1.5)
+        vno = vn.VectorNorm(confd_level=1.5, norm=2)
         vno.find_anomalies()
         vn_an = vno.get_anomalies()
-        pdfo = pdf.PDF(2.0, 15)
+        pdfo = pdf.PDF(confidence_level=2.0, cutoff=15)
         pdfo.detect_anomalies()
         pdf_an = pdfo.get_anomalies()
         self.anomalies = []

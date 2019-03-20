@@ -76,10 +76,10 @@ class VectorNorm(object):
 
     def view_profiles(self):
         fig, ax = plt.subplots()
-        l1, = ax.plot(self.expected[:10], 'r', label='Expecteds')
-        l2, = ax.plot(self.actual[:10], 'y', label='Actuals')
-        ax.set_xlabel('Day - 1/1/12 - 31/12/14')
-        ax.set_ylabel('2nd Difference Norm wrt 1 week')
+        l1, = ax.plot(self.expected, 'r', label='Expecteds')
+        l2, = ax.plot(self.actual, 'y', label='Actuals')
+        ax.set_xlabel('Day - 1/1/12 to 31/12/14')
+        ax.set_ylabel('Difference Norm wrt 1 week')
         ax.set_title("Vector Norm")
         ax.legend((l1, l2), ('Upper Limit', 'Norm value for the day profile'), shadow=True)
         plt.show()

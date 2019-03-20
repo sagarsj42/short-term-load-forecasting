@@ -24,22 +24,33 @@ class Network(object):
         self.test_mape = []
         self.mape_cache = 100*np.ones(cache_len)
 
-    def SGD(self, mini_batch_size=10, eta=0.25, mu=0.0, eta_steps=10, monitor_session=False):
-        epoch = 1
-        eta_org = eta
-        lim = np.power(2, eta_steps)
-        while eta > eta_org/lim:
-            mini_batches = self.form_mini_batches(mini_batch_size)
-            for mini_batch in mini_batches:
-                self.update_mini_batch(mini_batch, eta, mu)
-            mape = self.evaluate_mape(self.test_data)
-            self.check_acc_n_report(mape, epoch)
-            if self.change_eta(mape):
-                eta /= 2
-            if monitor_session:
-                self.find_report_other_data()
-                self.test_mape.append(mape)
-            epoch += 1
+    def SGD(self, mini_batch_size=10, eta=0.25, mu=0.0, epochs=30, eta_steps=10, monitor_session=False):
+        if not epochs:
+            epoch = 1
+            eta_org = eta
+            lim = np.power(2, eta_steps)
+            while eta > eta_org/lim:
+                mini_batches = self.form_mini_batches(mini_batch_size)
+                for mini_batch in mini_batches:
+                    self.update_mini_batch(mini_batch, eta, mu)
+                mape = self.evaluate_mape(self.test_data)
+                self.check_acc_n_report(mape, epoch)
+                if self.change_eta(mape):
+                    eta /= 2
+                if monitor_session:
+                    self.find_report_other_data()
+                    self.test_mape.append(mape)
+                epoch += 1
+        else:
+            for e in range(1, epochs+1, 1):
+                mini_batches = self.form_mini_batches(mini_batch_size)
+                for mini_batch in mini_batches:
+                    self.update_mini_batch(mini_batch, eta, mu)
+                mape = self.evaluate_mape(self.test_data)
+                self.check_acc_n_report(mape, e)
+                if monitor_session:
+                    self.find_report_other_data()
+                    self.test_mape.append(mape)
         self.store_session_info(monitor_session)
 
     def find_report_other_data(self):
@@ -132,10 +143,10 @@ class Network(object):
     def store_session_info(self, monitor_session=False):
         np.savez("best_params.npz", weights=self.best_weights, biases=self.best_biases,
                       best_error=self.best_error)
-        f = open("session_monitor_data.json", "w")
         if monitor_session:
+            f = open("session_monitor_data.json", "w")
             json.dump([self.training_cost, self.training_mape, self.test_cost, self.test_mape], f)
-        f.close()
+            f.close()
         print("\nSession complete. \nBest error = {0}% & best accuracy = {1}% at epoch {2}.".format(
             self.best_error, 100-self.best_error, self.best_epoch))
 
@@ -156,4 +167,4 @@ def sigmoid(z):
 
 if __name__ == "__main__":
     net = Network(hidden_nos=16, cache_len=15, replace_anomalies=True)
-    net.SGD(mini_batch_size=10, eta=0.3, eta_steps=15, mu=0.0)
+    net.SGD(mini_batch_size=10, eta=0.3, epochs=5, eta_steps=15, mu=0.0)

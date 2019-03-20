@@ -91,4 +91,4 @@ if __name__ == "__main__":
     pdf = PDF(2.0, 15)
     pdf.detect_anomalies()
     pdf.print_anomalies()
-    pdf.plot_limits(date="2012-01-01")
+    pdf.plot_limits(date="2012-12-25")
