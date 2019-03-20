@@ -4,17 +4,17 @@ import scipy.stats as sts
 from matplotlib import pyplot as plt
 
 class PDF(object):
-    def __init__(self):
+    def __init__(self, confidence_level=2.0, cutoff=20):
         self.set_data()
         self.form_intervals()
         self.fit_rows()
-        self.confidence_lev = 2.0
+        self.confidence_lev = confidence_level
         self.set_limits()
-        self.cutoff = 20
+        self.cutoff = cutoff
         self.anomalies = []
 
     def set_data(self):
-        self.data = pd.read_csv("LD2011_2014.csv")
+        self.data = pd.read_csv("LD2011_2014_N.csv")
         self.lower_lim = 365*96 - 1
         self.upper_lim = self.lower_lim + 1096*96 + 1
         self.days = int((self.upper_lim - self.lower_lim) / 96)
@@ -23,7 +23,7 @@ class PDF(object):
         self.intervals = np.zeros((96, self.days))
         for d in range(0, self.days):
             for i in range(0, 96):
-                self.intervals[i][d] = self.data.Load_kW[self.lower_lim + d*96 + i]
+                self.intervals[i][d] = self.data.Load[self.lower_lim + d*96 + i]
 
     def fit_rows(self):
         self.params = []
@@ -81,14 +81,14 @@ class PDF(object):
     def extract_load(self, date):
         date += " 00:00:00"
         p = pd.Index(self.data.YMDHMS).get_loc(date)
-        return self.data.Load_kW[p: p+96]
+        return self.data.Load[p: p+96]
 
     def get_anomalies(self):
         baddates = [d for d, s, diff in self.anomalies]
         return baddates
 
 if __name__ == "__main__":
-    pdf = PDF()
+    pdf = PDF(2.0, 15)
     pdf.detect_anomalies()
     pdf.print_anomalies()
-    pdf.plot_limits(date="2014-06-14")
+    pdf.plot_limits(date="2012-01-01")

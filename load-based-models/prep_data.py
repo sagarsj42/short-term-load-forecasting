@@ -1,19 +1,17 @@
 import pandas as pd
 import numpy as np
 
-import anomaly_treatment_sts as ats
-
 class DataLoader(object):
     def __init__(self, replace_anomalies=True, correct_dst=True):
-        self.data = pd.read_csv("LD2011_2014_N.csv")
+        datafile = 'LD2011_2014_N'
+        datafile += 'A.csv' if replace_anomalies else '.csv'
+        self.data = pd.read_csv(datafile)
         self.timestamps = self.data.YMDHMS.values
-        self.load = np.array(self.data.Load_kW.values)
+        self.load = np.array(self.data.Load.values)
         self.lower = 365*96 - 1
         self.training_lim = 731*96
         self.upper = self.lower + 1096*96 + 1
         self.packets = []
-        if replace_anomalies:
-            self.replace_anomalies()
         if correct_dst:
             self.correct_dst()
 
@@ -34,16 +32,6 @@ class DataLoader(object):
             d += ' 01:00:00'
             i = np.where(self.timestamps == d)[0][0]
             self.load[i: i+4] = self.load[i: i+4] / 2
-
-    def replace_anomalies(self):
-        self.anomalies = ats.AnomalyTreaterSts().get_and_anomalies()
-        for an in self.anomalies:
-            an += ' 00:00:00'
-            i = np.where(self.timestamps == an)[0][0]
-            ic = i - 96*7
-            while self.timestamps[ic][:10] in self.anomalies:
-                ic -= 96*7
-            self.load[i: i+96] = self.load[ic: ic+96]
 
     def get_weekday(self, year, month, date):
         day = 5 #Saturday on 1st Jan 2005

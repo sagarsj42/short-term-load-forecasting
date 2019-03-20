@@ -10,7 +10,7 @@ load = np.array(data.Load_kW.values)
 load /= 500000
 with open("LD2011_2014_N.csv", mode="w", newline='') as newfile:
     filewriter = csv.writer(newfile, delimiter=',', quotechar='|')
-    filewriter.writerow(['YMDHMS', 'Load_kW'])
+    filewriter.writerow(['YMDHMS', 'Load'])
     [filewriter.writerow([t, ln])for t, ln in zip(timestamps, load)]
 newfile.close()
 

@@ -55,8 +55,8 @@ class Forecaster(object):
     def plot_differences(self, start=0, end=1096*96):
         self.differences = list(map(lambda a1, a2 : (a1 - a2) / a1 * 100, self.actual, self.forecast))
         for d in self.differences:
-            if abs(d) > 100:
-                print(self.timestamps[self.differences.index(d)])
+            if abs(d) > 20:
+                print(self.timestamps[self.differences.index(d)] + ' ' + str(d))
         fig = plt.figure(2)
         ax = fig.add_subplot(111)
         ax.plot(self.differences[start:end])
@@ -67,5 +67,5 @@ class Forecaster(object):
 
 if __name__ == "__main__":
     f = Forecaster()
-    f.plot_comparison(type='day', start='2013-10-27')
-    f.plot_differences()
+    #f.plot_comparison(type='day', start='2012-01-01')
+    f.plot_differences(start=0, end=96)
