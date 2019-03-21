@@ -7,7 +7,7 @@ import prep_data
 
 class Network(object):
     def __init__(self, hidden_nos=10, cache_len=10, replace_anomalies=False):
-        self.training_data, self.test_data = prep_data.DataLoader(replace_anomalies=replace_anomalies).get_data()
+        self.training_data, self.test_data = prep_data.DataLoader(replace_anomalies=replace_anomalies, correct_dst=True).get_data()
         self.num_layers = 3
         ip_len = len(self.training_data[0][0])
         self.sizes = [ip_len, hidden_nos, 1]
@@ -22,9 +22,9 @@ class Network(object):
         self.training_mape = []
         self.test_cost = []
         self.test_mape = []
-        self.mape_cache = 100*np.ones(cache_len)
+        self.mape_cache = np.zeros(cache_len)
 
-    def SGD(self, mini_batch_size=10, eta=0.25, mu=0.0, epochs=30, eta_steps=10, monitor_session=False):
+    def SGD(self, mini_batch_size=10, eta=0.25, mu=0.0, epochs=None, eta_steps=10, monitor_session=False):
         if not epochs:
             epoch = 1
             eta_org = eta
@@ -37,6 +37,7 @@ class Network(object):
                 self.check_acc_n_report(mape, epoch)
                 if self.change_eta(mape):
                     eta /= 2
+                    self.mape_cache[:-1] = 0
                 if monitor_session:
                     self.find_report_other_data()
                     self.test_mape.append(mape)
@@ -89,7 +90,7 @@ class Network(object):
             self.best_error = error
             self.best_weights = self.weights
             self.best_biases = self.biases
-            self.best_epoch = epoch + 1
+            self.best_epoch = epoch
         print("\nEpoch {0}: \n Test Data MAPE = {1}% \t Accuracy = {2}%".format(epoch, error, 100 - error))
 
     def evaluate_mape(self, data):
@@ -166,5 +167,5 @@ def sigmoid(z):
 
 
 if __name__ == "__main__":
-    net = Network(hidden_nos=16, cache_len=15, replace_anomalies=True)
-    net.SGD(mini_batch_size=10, eta=0.3, epochs=5, eta_steps=15, mu=0.0)
+    net = Network(hidden_nos=16, cache_len=20, replace_anomalies=False)
+    net.SGD(mini_batch_size=10, eta=0.3, epochs=40, eta_steps=10, mu=0.6)

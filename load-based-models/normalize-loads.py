@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 data = pd.read_csv("LD2011_2014.csv")
 timestamps = data.YMDHMS
 load = np.array(data.Load_kW.values)
-load /= 500000
+load = (load - 282) / (452486 - 282)
 with open("LD2011_2014_N.csv", mode="w", newline='') as newfile:
     filewriter = csv.writer(newfile, delimiter=',', quotechar='|')
     filewriter.writerow(['YMDHMS', 'Load'])

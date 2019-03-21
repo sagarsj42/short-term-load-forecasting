@@ -8,27 +8,29 @@ import feed_back as fb
 import prep_data
 
 class Forecaster(object):
-    def __init__(self, run_network=False):
-        self.set_params(run_network)
-        self.save_forecast()
+    def __init__(self, run_network=False, replace_anomalies=False):
+        self.set_params(run_network=run_network, replace_anomalies=replace_anomalies)
+        self.save_forecast(replace_anomalies)
         self.intervals = {'day': 96, 'week': 7*96, 'month': 31*96, 'year': 366*96}
 
-    def set_params(self, run_network=False):
+    def set_params(self, replace_anomalies, run_network=False):
         self.data, test = prep_data.DataLoader(replace_anomalies=True).get_data()
         self.data.extend(test)
         self.actual = list(map(lambda x : x[1][0][0], self.data))
         if run_network:
-            net = fb.Network(hidden_nos=15, cache_len=15)
-            net.SGD(mini_batch_size=10, eta=0.3, mu=0.6, eta_steps=10, monitor_session=False)
+            net = fb.Network(hidden_nos=15, cache_len=15, replace_anomalies=replace_anomalies)
+            net.SGD(mini_batch_size=10, eta=0.3, mu=0.6, epochs=None, eta_steps=10, monitor_session=False)
         filename = 'best_params.npz'
         with np.load(filename) as paramsfile:
             self.weights = paramsfile['weights']
             self.biases = paramsfile['biases']
 
-    def save_forecast(self):
+    def save_forecast(self, anomaly_treated):
         self.timestamps = pd.read_csv('LD2011_2014_N.csv').YMDHMS.values[365*96 - 1:]
         self.forecast = [fb.feedforward(x[0], self.weights, self.biases)[0][0] for x in self.data]
-        with open('LD2012_2014_NF.csv', mode='w', newline='') as file:
+        filename = 'LD2012_2014_NF'
+        filename += 'A.csv' if anomaly_treated else '.csv'
+        with open(filename, mode='w', newline='') as file:
             filewriter = csv.writer(file, delimiter=',', quotechar='|')
             filewriter.writerow(['YMDHMS', 'Actual', 'Forecast'])
             [filewriter.writerow([t, a, f]) for t, a, f in zip(self.timestamps, self.actual, self.forecast)]
@@ -55,7 +57,7 @@ class Forecaster(object):
     def plot_differences(self, start=0, end=1096*96):
         self.differences = list(map(lambda a1, a2 : (a1 - a2) / a1 * 100, self.actual, self.forecast))
         for d in self.differences:
-            if abs(d) > 20:
+            if abs(d) > 30:
                 print(self.timestamps[self.differences.index(d)] + ' ' + str(d))
         fig = plt.figure(2)
         ax = fig.add_subplot(111)
@@ -66,6 +68,6 @@ class Forecaster(object):
         plt.show()
 
 if __name__ == "__main__":
-    f = Forecaster()
-    f.plot_comparison(type='day', start='2012-01-01')
+    f = Forecaster(replace_anomalies=False)
+    f.plot_comparison(type='day', start='2012-12-26')
     f.plot_differences()
