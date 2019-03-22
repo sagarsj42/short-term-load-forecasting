@@ -14,7 +14,7 @@ def run_network():
     random.seed(23456789)
     np.random.seed(23456789)
     net = fb.Network(hidden_nos=15, cache_len=20, replace_anomalies=False)
-    net.SGD(eta=0.25, mu=0.0, mini_batch_size=10, epochs=None, eta_steps=10, monitor_session=True)
+    net.SGD(eta=0.25, mu=0.0, mini_batch_size=10, epochs=30, eta_steps=10, monitor_session=True)
 
 def make_plots(min_training_cost, min_training_mape, min_test_cost, min_test_mape):
     f = open("session_monitor_data.json", "r+b")

@@ -1,7 +1,7 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 
-filename = 'LD2011_2014_NA.csv'
+filename = 'LD2011_2014_N.csv'
 data = pd.read_csv(filename)
 load = data.Load.values
 data.YMDHMS = pd.Series([d[:10] for d in data.YMDHMS.values])
@@ -20,4 +20,4 @@ def compare_profiles(day1, day2):
     plt.show()
 
 if __name__ == '__main__':
-    compare_profiles('2012-01-01', '2012-01-08')
+    compare_profiles('2013-12-25', '2014-01-01')

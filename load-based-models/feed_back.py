@@ -7,7 +7,8 @@ import prep_data
 
 class Network(object):
     def __init__(self, hidden_nos=10, cache_len=10, replace_anomalies=False):
-        self.training_data, self.test_data = prep_data.DataLoader(replace_anomalies=replace_anomalies, correct_dst=True).get_data()
+        self.training_data, self.test_data = prep_data.DataLoader(replace_anomalies=replace_anomalies,
+                                                                  correct_dst=True).get_data()
         self.num_layers = 3
         ip_len = len(self.training_data[0][0])
         self.sizes = [ip_len, hidden_nos, 1]
@@ -168,4 +169,4 @@ def sigmoid(z):
 
 if __name__ == "__main__":
     net = Network(hidden_nos=16, cache_len=20, replace_anomalies=False)
-    net.SGD(mini_batch_size=10, eta=0.3, epochs=40, eta_steps=10, mu=0.6)
+    net.SGD(mini_batch_size=10, eta=0.3, epochs=100, eta_steps=10, mu=0.4)

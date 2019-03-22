@@ -10,11 +10,11 @@ import prep_data
 class Forecaster(object):
     def __init__(self, run_network=False, replace_anomalies=False):
         self.set_params(run_network=run_network, replace_anomalies=replace_anomalies)
-        self.save_forecast(replace_anomalies)
+        self.save_forecast(anomaly_treated=replace_anomalies)
         self.intervals = {'day': 96, 'week': 7*96, 'month': 31*96, 'year': 366*96}
 
     def set_params(self, replace_anomalies, run_network=False):
-        self.data, test = prep_data.DataLoader(replace_anomalies=True).get_data()
+        self.data, test = prep_data.DataLoader(replace_anomalies=replace_anomalies, correct_dst=True).get_data()
         self.data.extend(test)
         self.actual = list(map(lambda x : x[1][0][0], self.data))
         if run_network:
@@ -69,5 +69,5 @@ class Forecaster(object):
 
 if __name__ == "__main__":
     f = Forecaster(replace_anomalies=False)
-    f.plot_comparison(type='day', start='2012-12-26')
-    f.plot_differences()
+    f.plot_comparison(type='week', start='2014-06-10')
+    #f.plot_differences()
