@@ -18,7 +18,7 @@ class Forecaster(object):
         self.data.extend(test)
         self.actual = list(map(lambda x : x[1][0][0], self.data))
         if run_network:
-            net = fb.Network(hidden_nos=15, cache_len=15, replace_anomalies=replace_anomalies)
+            net = fb.Network(hidden_layers=15, cache_len=15, replace_anomalies=replace_anomalies)
             net.SGD(mini_batch_size=10, eta=0.3, mu=0.6, epochs=None, eta_steps=10, monitor_session=False)
         filename = 'best_params.npz'
         with np.load(filename) as paramsfile:

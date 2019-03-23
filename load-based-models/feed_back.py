@@ -6,12 +6,14 @@ import numpy as np
 import prep_data
 
 class Network(object):
-    def __init__(self, hidden_nos=10, cache_len=10, replace_anomalies=False):
+    def __init__(self, hidden_layers, cache_len=10, replace_anomalies=False):
         self.training_data, self.test_data = prep_data.DataLoader(replace_anomalies=replace_anomalies,
                                                                   correct_dst=True).get_data()
-        self.num_layers = 3
-        ip_len = len(self.training_data[0][0])
-        self.sizes = [ip_len, hidden_nos, 1]
+        self.num_layers = len(hidden_layers) + 2
+        ip_len = [len(self.training_data[0][0])]
+        self.sizes = ip_len
+        self.sizes.extend(hidden_layers)
+        self.sizes.extend([1])
         self.weights = [np.random.randn(m, n) for m, n in zip(self.sizes[1:], self.sizes[:-1])]
         self.biases = [np.random.randn(m, 1) for m in self.sizes[1:]]
         self.velocities = [np.zeros(w.shape) for w in self.weights]
@@ -168,5 +170,5 @@ def sigmoid(z):
 
 
 if __name__ == "__main__":
-    net = Network(hidden_nos=16, cache_len=20, replace_anomalies=False)
+    net = Network(hidden_layers=[16, 16], cache_len=20, replace_anomalies=False)
     net.SGD(mini_batch_size=10, eta=0.3, epochs=100, eta_steps=10, mu=0.4)
