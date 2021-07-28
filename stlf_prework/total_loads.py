@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 #from matplotlib import pyplot as plt
 
-data = pd.read_csv("C:\Orb\Short Term Load Forecasting\data\LD2011_2014.txt", sep=';')
+data = pd.read_csv("../../data/LD2011_2014.txt", sep=';')
 (rows, columns) = data.shape
 total_loads = np.zeros(rows)
 time_stamps = []

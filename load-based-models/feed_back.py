@@ -6,9 +6,9 @@ import numpy as np
 import prep_data
 
 class Network(object):
-    def __init__(self, hidden_layers, cache_len=10, replace_anomalies=False):
-        self.training_data, self.test_data = prep_data.DataLoader(replace_anomalies=replace_anomalies,
-                                                                  correct_dst=True).get_data()
+    def __init__(self, loadfile, hidden_layers, cache_len=10, replace_anomalies=False):
+        self.training_data, self.test_data = prep_data.DataLoader(loadfile, replace_anomalies=replace_anomalies,
+                                                                  correct_dst=False).get_data()
         self.num_layers = len(hidden_layers) + 2
         ip_len = [len(self.training_data[0][0])]
         self.sizes = ip_len
@@ -170,5 +170,5 @@ def sigmoid(z):
 
 
 if __name__ == "__main__":
-    net = Network(hidden_layers=[16, 16], cache_len=20, replace_anomalies=False)
-    net.SGD(mini_batch_size=10, eta=0.3, epochs=100, eta_steps=10, mu=0.4)
+    net = Network('TPC_Load_N.csv', hidden_layers=[16], cache_len=20, replace_anomalies=False)
+    net.SGD(mini_batch_size=10, eta=0.3, epochs=10, eta_steps=10, mu=0.0)

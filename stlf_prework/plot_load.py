@@ -23,4 +23,6 @@ for key, value in data.iteritems():
              total_load += loads_temp
              i = i + 1
 plt.plot(total_load)
+plt.xlabel('Time')
+plt.ylabel('Load (kW)')
 plt.show()

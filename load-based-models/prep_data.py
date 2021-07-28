@@ -1,16 +1,29 @@
 import pandas as pd
 import numpy as np
 
+'''
+The data preparation module which:
+1. Takes in normalized timestamped load data from the specified .csv file.
+2. Extracts temporal values from timestamps
+3. Converts the timestamps into binary arrays for each feature: month, day, hour, sub-hour (i.e. 15-min interval)
+4. Applies the adjustment for Daylight Savings Time on load data if specified
+5. Prepares data packets consisting of an input vector and the actual value of the forecast
+6. Input vector consists of the load of the previous 6 hours, previous day and week;
+   stacked with the binary vectors representing the temporal data
+7. '''
+
 class DataLoader(object):
-    def __init__(self, replace_anomalies=True, correct_dst=True):
-        datafile = 'LD2011_2014_N'
-        datafile += 'A.csv' if replace_anomalies else '.csv'
-        self.data = pd.read_csv(datafile)
+    def __init__(self, loadfile, replace_anomalies=False, correct_dst=False):
+        loadfile = loadfile[:-4] + '_A.csv' if replace_anomalies else loadfile
+        self.data = pd.read_csv(loadfile)
         self.timestamps = self.data.YMDHMS.values
         self.load = np.array(self.data.Load.values)
-        self.lower = 365*96 - 1
+        '''self.lower = 365*96 - 1
         self.training_lim = 731*96
-        self.upper = self.lower + 1096*96 + 1
+        self.upper = self.lower + 1096*96 + 1'''
+        self.lower = 0
+        self.training_lim = (365*3 + 366) * 96
+        self.upper = self.training_lim + 366*96
         self.packets = []
         if correct_dst:
             self.correct_dst()
@@ -89,7 +102,7 @@ class DataLoader(object):
         return (self.packets[: self.training_lim], self.packets[self.training_lim:])
 
 if __name__ == "__main__":
-    prep = DataLoader()
+    prep = DataLoader('TPC_Load_N.csv')
     training_data, test_data = prep.get_data()
     print("Some training data:")
     [print(a) for a in training_data[-10:]]

@@ -4,8 +4,8 @@ import scipy.stats as sts
 from matplotlib import pyplot as plt
 
 class PDF(object):
-    def __init__(self, confidence_level=2.0, cutoff=20):
-        self.set_data()
+    def __init__(self, loadfile, confidence_level=2.0, cutoff=20):
+        self.set_data(loadfile)
         self.form_intervals()
         self.fit_rows()
         self.confidence_lev = confidence_level
@@ -13,10 +13,12 @@ class PDF(object):
         self.cutoff = cutoff
         self.anomalies = []
 
-    def set_data(self):
-        self.data = pd.read_csv("LD2011_2014_N.csv")
-        self.lower_lim = 365*96 - 1
-        self.upper_lim = self.lower_lim + 1096*96 + 1
+    def set_data(self, loadfile):
+        self.data = pd.read_csv(loadfile)
+        '''self.lower_lim = 365*96 - 1
+        self.upper_lim = self.lower_lim + 1096*96 + 1'''
+        self.lower_lim = 0
+        self.upper_lim = (365*3 + 366*2) * 96
         self.days = int((self.upper_lim - self.lower_lim) / 96)
 
     def form_intervals(self):
@@ -88,7 +90,7 @@ class PDF(object):
         return baddates
 
 if __name__ == "__main__":
-    pdf = PDF(2.0, 15)
+    pdf = PDF('TPC_Load.csv', 2.0, 15)
     pdf.detect_anomalies()
     pdf.print_anomalies()
-    pdf.plot_limits(date="2012-12-25")
+    pdf.plot_limits(date="2014-01-02")

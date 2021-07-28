@@ -20,4 +20,4 @@ def compare_profiles(day1, day2):
     plt.show()
 
 if __name__ == '__main__':
-    compare_profiles('2013-12-25', '2014-01-01')
+    compare_profiles('2013-12-25', '2013-12-26')

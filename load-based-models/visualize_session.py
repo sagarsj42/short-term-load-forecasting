@@ -13,7 +13,7 @@ def main(min_training_cost=0, min_training_mape=0, min_test_cost=0, min_test_map
 def run_network():
     random.seed(23456789)
     np.random.seed(23456789)
-    net = fb.Network(hidden_layers=[50], cache_len=20, replace_anomalies=False)
+    net = fb.Network('TPC_Load_N.csv', hidden_layers=[20, 20], cache_len=20, replace_anomalies=False)
     net.SGD(eta=0.25, mu=0.0, mini_batch_size=10, epochs=None, eta_steps=10, monitor_session=True)
 
 def make_plots(min_training_cost, min_training_mape, min_test_cost, min_test_mape):

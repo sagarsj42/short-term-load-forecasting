@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 
-data = pd.read_csv("C:\Orb\Short Term Load Forecasting\data\LD2012.txt", sep=';')
+data = pd.read_csv("../../data/LD2012.txt", sep=';')
 (rows, columns) = data.shape
 total_load = np.zeros(rows)
 lower = 9600
