@@ -11,7 +11,7 @@ The system architecture was later tested on a private data for Mumbai city, givi
 Calls the Anomaly Detection algorithms of [Vector Norm](https://github.com/sagarsj42/short-term-load-forecasting/blob/master/load-based-models/vector_norm.py) and [Probability Distribution Function](https://github.com/sagarsj42/short-term-load-forecasting/blob/master/load-based-models/probability_distribution_function.py) and replaces the detected anomaly points (using withing ORing or ANDing of the outputs) with their next weekly value.
 
 ### [Data Normalization](https://github.com/sagarsj42/short-term-load-forecasting/blob/master/load-based-models/normalize-loads.py)
-Normalizes the load data to lie in \[0, 1\].
+Normalizes the load data to lie in the range \[0, 1\].
 
 ### [Data Preparation](https://github.com/sagarsj42/short-term-load-forecasting/blob/master/load-based-models/prep_data.py)
 Prepares the load data and data from timestamps to input vectors and output values for it to be suitable to feed a neural network.
